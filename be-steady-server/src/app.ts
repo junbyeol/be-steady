@@ -1,15 +1,15 @@
 import 'reflect-metadata';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import compression from 'compression';
-import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
-import { dbConnection } from '@database';
+import { DB } from '@database';
 import { Routes } from '@interfaces/routes.interface';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
@@ -45,7 +45,7 @@ export class App {
   }
 
   private async connectToDatabase() {
-    await dbConnection();
+    await DB.sequelize.sync({ force: false });
   }
 
   private initializeMiddlewares() {

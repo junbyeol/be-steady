@@ -1,18 +1,12 @@
 import bcrypt from 'bcrypt';
+import { Sequelize } from 'sequelize';
 import request from 'supertest';
-import { createConnection, getConnection, Repository } from 'typeorm';
 import { App } from '@/app';
-import { dbConnection } from '@database';
 import { CreateUserDto } from '@dtos/users.dto';
-import { UserEntity } from '@entities/users.entity';
 import { AuthRoute } from '@routes/auth.route';
 
-// beforeAll(async () => {
-//   await createConnection(dbConnection);
-// });
-
 afterAll(async () => {
-  await getConnection().close();
+  await new Promise<void>(resolve => setTimeout(() => resolve(), 500));
 });
 
 describe('Testing Auth', () => {
@@ -24,15 +18,16 @@ describe('Testing Auth', () => {
       };
 
       const authRoute = new AuthRoute();
-      const userRepository = new Repository<UserEntity>();
+      const users = authRoute.authController.authService.users;
 
-      userRepository.findOne = jest.fn().mockReturnValue(null);
-      userRepository.save = jest.fn().mockReturnValue({
+      users.findOne = jest.fn().mockReturnValue(null);
+      users.create = jest.fn().mockReturnValue({
         id: 1,
         email: userData.email,
         password: await bcrypt.hash(userData.password, 10),
       });
 
+      (Sequelize as any).authenticate = jest.fn();
       const app = new App([authRoute]);
       return request(app.getServer()).post(`${authRoute.path}signup`).send(userData).expect(201);
     });
@@ -46,14 +41,15 @@ describe('Testing Auth', () => {
       };
 
       const authRoute = new AuthRoute();
-      const userRepository = new Repository<UserEntity>();
+      const users = authRoute.authController.authService.users;
 
-      userRepository.findOne = jest.fn().mockReturnValue({
+      users.findOne = jest.fn().mockReturnValue({
         id: 1,
         email: userData.email,
         password: await bcrypt.hash(userData.password, 10),
       });
 
+      (Sequelize as any).authenticate = jest.fn();
       const app = new App([authRoute]);
       return request(app.getServer())
         .post(`${authRoute.path}login`)
@@ -65,8 +61,8 @@ describe('Testing Auth', () => {
   // describe('[POST] /logout', () => {
   //   it('logout Set-Cookie Authorization=; Max-age=0', async () => {
   //     const authRoute = new AuthRoute();
-  //     const app = new App([authRoute]);
 
+  //     const app = new App([authRoute]);
   //     return request(app.getServer())
   //       .post(`${authRoute.path}logout`)
   //       .expect('Set-Cookie', /^Authorization=\;/);

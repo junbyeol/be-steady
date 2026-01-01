@@ -1,26 +1,34 @@
-import { join } from 'path';
-import { createConnection, ConnectionOptions } from 'typeorm';
-import { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DATABASE } from '@config';
+import Sequelize from 'sequelize';
+import { NODE_ENV, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE } from '@config';
+import UserModel from '@models/users.model';
+import { logger } from '@utils/logger';
 
-export const dbConnection = async () => {
-  const dbConfig: ConnectionOptions = {
-    type: 'postgres',
-    username: POSTGRES_USER,
-    password: POSTGRES_PASSWORD,
-    host: POSTGRES_HOST,
-    port: +POSTGRES_PORT,
-    database: POSTGRES_DATABASE,
-    synchronize: true,
-    logging: false,
-    entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
-    migrations: [join(__dirname, '../**/*.migration{.ts,.js}')],
-    subscribers: [join(__dirname, '../**/*.subscriber{.ts,.js}')],
-    cli: {
-      entitiesDir: 'src/entities',
-      migrationsDir: 'src/migration',
-      subscribersDir: 'src/subscriber',
-    },
-  };
+const sequelize = new Sequelize.Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
+  dialect: 'mysql',
+  host: DB_HOST,
+  port: DB_PORT,
+  timezone: '+09:00',
+  define: {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_general_ci',
+    underscored: true,
+    freezeTableName: true,
+  },
+  pool: {
+    min: 0,
+    max: 5,
+  },
+  logQueryParameters: NODE_ENV === 'development',
+  logging: (query, time) => {
+    logger.info(time + 'ms' + ' ' + query);
+  },
+  benchmark: true,
+});
 
-  await createConnection(dbConfig);
+sequelize.authenticate();
+
+export const DB = {
+  Users: UserModel(sequelize),
+  sequelize, // connection instance (RAW queries)
+  Sequelize, // library
 };

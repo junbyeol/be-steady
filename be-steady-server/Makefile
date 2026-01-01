@@ -42,5 +42,5 @@ remove: ## Remove the volumes
 	docker volume rm -f ${APP_NAME}
 
 #-- Database
-db: ## Start the local database PostgreSQL
-	docker-compose up -d pg
+db: ## Start the local database MySQL
+	docker-compose up -d mysql

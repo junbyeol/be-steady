@@ -25,10 +25,10 @@
       "@controllers/*": ["controllers/*"],
       "@database": ["database"],
       "@dtos/*": ["dtos/*"],
-      "@entities/*": ["entities/*"],
       "@exceptions/*": ["exceptions/*"],
       "@interfaces/*": ["interfaces/*"],
       "@middlewares/*": ["middlewares/*"],
+      "@models/*": ["models/*"],
       "@routes/*": ["routes/*"],
       "@services/*": ["services/*"],
       "@utils/*": ["utils/*"]

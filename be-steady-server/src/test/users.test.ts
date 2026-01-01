@@ -1,49 +1,21 @@
 import bcrypt from 'bcrypt';
+import { Sequelize } from 'sequelize';
 import request from 'supertest';
-import { createConnection, getConnection, Repository } from 'typeorm';
 import { App } from '@/app';
-import { dbConnection } from '@database';
 import { CreateUserDto } from '@dtos/users.dto';
-import { UserEntity } from '@entities/users.entity';
 import { UserRoute } from '@routes/users.route';
 
-// beforeAll(async () => {
-//   await createConnection(dbConnection);
-// });
-
 afterAll(async () => {
-  await getConnection().close();
+  await new Promise<void>(resolve => setTimeout(() => resolve(), 500));
 });
 
 describe('Testing Users', () => {
-  describe('[POST] /users', () => {
-    it('response Create user', async () => {
-      const userData: CreateUserDto = {
-        email: 'test@email.com',
-        password: 'q1w2e3r4!',
-      };
-
-      const usersRoute = new UserRoute();
-      const userRepository = new Repository<UserEntity>();
-
-      userRepository.findOne = jest.fn().mockReturnValue(null);
-      userRepository.save = jest.fn().mockReturnValue({
-        id: 1,
-        email: userData.email,
-        password: await bcrypt.hash(userData.password, 10),
-      });
-
-      const app = new App([usersRoute]);
-      return request(app.getServer()).post(`${usersRoute.path}`).send(userData).expect(201);
-    });
-  });
-
   describe('[GET] /users', () => {
     it('response findAll users', async () => {
       const usersRoute = new UserRoute();
-      const userRepository = new Repository<UserEntity>();
+      const users = usersRoute.usersController.userService.users;
 
-      userRepository.find = jest.fn().mockReturnValue([
+      users.findAll = jest.fn().mockReturnValue([
         {
           id: 1,
           email: 'a@email.com',
@@ -61,6 +33,7 @@ describe('Testing Users', () => {
         },
       ]);
 
+      (Sequelize as any).authenticate = jest.fn();
       const app = new App([usersRoute]);
       return request(app.getServer()).get(`${usersRoute.path}`).expect(200);
     });
@@ -71,16 +44,40 @@ describe('Testing Users', () => {
       const userId = 1;
 
       const usersRoute = new UserRoute();
-      const userRepository = new Repository<UserEntity>();
+      const users = usersRoute.usersController.userService.users;
 
-      userRepository.findOne = jest.fn().mockReturnValue({
-        id: userId,
+      users.findByPk = jest.fn().mockReturnValue({
+        id: 1,
         email: 'a@email.com',
         password: await bcrypt.hash('q1w2e3r4!', 10),
       });
 
+      (Sequelize as any).authenticate = jest.fn();
       const app = new App([usersRoute]);
       return request(app.getServer()).get(`${usersRoute.path}/${userId}`).expect(200);
+    });
+  });
+
+  describe('[POST] /users', () => {
+    it('response Create user', async () => {
+      const userData: CreateUserDto = {
+        email: 'test@email.com',
+        password: 'q1w2e3r4!',
+      };
+
+      const usersRoute = new UserRoute();
+      const users = usersRoute.usersController.userService.users;
+
+      users.findOne = jest.fn().mockReturnValue(null);
+      users.create = jest.fn().mockReturnValue({
+        id: 1,
+        email: userData.email,
+        password: await bcrypt.hash(userData.password, 10),
+      });
+
+      (Sequelize as any).authenticate = jest.fn();
+      const app = new App([usersRoute]);
+      return request(app.getServer()).post(`${usersRoute.path}`).send(userData).expect(201);
     });
   });
 
@@ -93,24 +90,21 @@ describe('Testing Users', () => {
       };
 
       const usersRoute = new UserRoute();
-      const userRepository = new Repository<UserEntity>();
+      const users = usersRoute.usersController.userService.users;
 
-      userRepository.findOne = jest.fn().mockReturnValue({
+      users.findByPk = jest.fn().mockReturnValue({
         id: userId,
         email: userData.email,
         password: await bcrypt.hash(userData.password, 10),
       });
-      userRepository.update = jest.fn().mockReturnValue({
-        generatedMaps: [],
-        raw: [],
-        affected: 1,
-      });
-      userRepository.findOne = jest.fn().mockReturnValue({
+      users.update = jest.fn().mockReturnValue([1]);
+      users.findByPk = jest.fn().mockReturnValue({
         id: userId,
         email: userData.email,
         password: await bcrypt.hash(userData.password, 10),
       });
 
+      (Sequelize as any).authenticate = jest.fn();
       const app = new App([usersRoute]);
       return request(app.getServer()).put(`${usersRoute.path}/${userId}`).send(userData).expect(200);
     });
@@ -121,14 +115,15 @@ describe('Testing Users', () => {
       const userId = 1;
 
       const usersRoute = new UserRoute();
-      const userRepository = new Repository<UserEntity>();
+      const users = usersRoute.usersController.userService.users;
 
-      userRepository.findOne = jest.fn().mockReturnValue({
+      users.findByPk = jest.fn().mockReturnValue({
         id: userId,
         email: 'a@email.com',
         password: await bcrypt.hash('q1w2e3r4!', 10),
       });
 
+      (Sequelize as any).authenticate = jest.fn();
       const app = new App([usersRoute]);
       return request(app.getServer()).delete(`${usersRoute.path}/${userId}`).expect(200);
     });
