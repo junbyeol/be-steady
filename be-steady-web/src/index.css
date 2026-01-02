@@ -18,6 +18,8 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  height: 100vh;
+  width: 100vw;
 }
 
 a {
@@ -38,7 +40,6 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
   line-height: 1.1;
 }
 
