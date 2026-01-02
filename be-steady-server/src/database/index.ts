@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 import { NODE_ENV, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE } from '@config';
 import UserModel from '@models/users.model';
 import ProjectModel from '@models/projects.model';
+import TaskModel from '@models/tasks.model';
 import { logger } from '@utils/logger';
 
 const sequelize = new Sequelize.Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
@@ -31,6 +32,7 @@ sequelize.authenticate();
 export const DB = {
   Users: UserModel(sequelize),
   Projects: ProjectModel(sequelize),
+  Tasks: TaskModel(sequelize),
   sequelize, // connection instance (RAW queries)
   Sequelize, // library
 };

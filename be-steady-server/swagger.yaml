@@ -126,6 +126,51 @@ paths:
         500:
           description: 'Server Error'
 
+# [GET] tasks/project/projectId
+  /tasks/project/{projectId}:
+    get:
+      tags:
+      - tasks
+      summary: Find All Tasks By Project Id
+      parameters:
+      - name: projectId
+        in: path
+        description: Project Id
+        required: true
+        type: string
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/tasks'
+
+# [POST] tasks
+  /tasks:
+    post:
+      tags:
+      - tasks
+      summary: Create Task
+      parameters:
+      - name: body
+        in: body
+        description: task Data
+        required: true
+        schema:
+          $ref: '#/definitions/tasks'
+      responses:
+        201:
+          description: 'Created'
+        500:
+          description: 'Server Error'
+
 # definitions
 definitions:
   users:
@@ -149,6 +194,20 @@ definitions:
       title:
         type: string
         description: project Title
+
+  tasks:
+    type: object
+    required:
+        - datetime
+        - projectId
+    properties:
+      datetime:
+        type: string
+        format: date-time
+        description: task Datetime
+      projectId:
+        type: string
+        description: project Id (string)
 
 schemes:
  - https
