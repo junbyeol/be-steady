@@ -4,7 +4,7 @@
  *  production mode :: pm2 start ecosystem.config.js --only prod
  *  development mode :: pm2 start ecosystem.config.js --only dev
  */
- module.exports = {
+module.exports = {
   apps: [
     {
       name: 'prod', // pm2 start App name
