@@ -8,7 +8,7 @@ on:
       - main
     paths:
       - 'be-steady-web/**'
-      - '.github/workflows/firebase-hosting-pull-request.yml'
+      - '.github/workflows/firebase-hosting-merge.yml'
     workflow_dispatch:
 permissions:
   checks: write
