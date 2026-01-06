@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { Project } from '@interfaces/projects.interface';
 import { CreateProjectDto } from '@dtos/projects.dto';
-import { HttpException } from '@/exceptions/httpException';
+import { HttpException } from '@/exceptions/HttpException';
 import { DB } from '@database';
 import ShortUniqueId from 'short-unique-id';
 

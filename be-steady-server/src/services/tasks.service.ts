@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { DB } from '@database';
 import { Task } from '@interfaces/tasks.interface';
 import { CreateTaskDto } from '@dtos/tasks.dto';
-import { HttpException } from '@/exceptions/httpException';
+import { HttpException } from '@/exceptions/HttpException';
 
 @Service()
 export class TaskService {

@@ -9,4 +9,12 @@ ValidateEnv();
 
 const app = new App([new AuthRoute(), new UserRoute(), new ProjectRoute(), new TaskRoute()]);
 
-app.listen();
+(async () => {
+  try {
+    await app.initialize();
+    app.listen();
+  } catch (error) {
+    console.error('Failed to initialize the app:', error);
+    process.exit(1);
+  }
+})();

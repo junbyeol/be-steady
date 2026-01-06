@@ -1,23 +1,38 @@
-# NodeJS Version 16
-FROM node:16.18-buster-slim
+# 1단계: 빌드 스테이지
+FROM node:24-slim AS builder
 
-# Copy Dir
-COPY . ./app
-
-# Work to Dir
 WORKDIR /app
 
-# Install Node Package
-RUN npm install --legacy-peer-deps
+# 의존성 정의 파일만 먼저 복사 (캐싱 활용)
+COPY package*.json ./
 
-RUN chmod +x /app/docker-entrypoint.sh
+# 모든 의존성 설치 (빌드 도구 포함)
+RUN npm ci
 
-ENTRYPOINT [ "docker-entrypoint.sh" ]
+# 소스 코드 복사 및 빌드
+COPY . .
+RUN npm run build
 
-# Set Env
-ENV NODE_ENV production
+######################################
+# 2단계; 의존성 설치
+FROM node:24-slim AS dependencies
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit dev
+
+######################################
+# 3단계: 실행 스테이지 (최종 이미지)
+FROM node:24-slim
+
+WORKDIR /app
+# 운영 환경에 필요한 설정
+ENV NODE_ENV=production
+
+# 빌드 스테이지에서 생성된 결과물 복사
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+COPY --from=dependencies /app/node_modules ./node_modules
 
 EXPOSE 3000
 
-# Cmd script
-CMD ["npm", "run", "start"]
+CMD ["node","dist/server.js"]

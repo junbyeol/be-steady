@@ -24,11 +24,16 @@ export class App {
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
 
-    this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
-    this.initializeSwagger();
+    if (this.env === 'development') {
+      this.initializeSwagger();
+    }
     this.initializeErrorHandling();
+  }
+
+  public async initialize() {
+    await this.connectToDatabase();
   }
 
   public listen() {
@@ -45,7 +50,26 @@ export class App {
   }
 
   private async connectToDatabase() {
-    await DB.sequelize.sync({ force: false, alter: true });
+    let retries = 5;
+    while (retries > 0) {
+      try {
+        await DB.sequelize.authenticate();
+        await DB.sequelize.sync({ force: false, alter: true });
+        logger.info('🟢 The database is connected.');
+        break;
+      } catch (error) {
+        retries -= 1;
+        logger.error(`🔴 Error connecting to the database. Retrying... (${retries} retries left)`);
+        logger.error(error);
+        // 5초 대기 후 재시도
+        await new Promise(res => setTimeout(res, 5000));
+      }
+    }
+
+    if (retries === 0) {
+      logger.error('🔴 Could not connect to the database after multiple attempts.');
+      throw new Error('Database connection failed');
+    }
   }
 
   private initializeMiddlewares() {
@@ -60,6 +84,11 @@ export class App {
   }
 
   private initializeRoutes(routes: Routes[]) {
+    //ping route
+    this.app.get('/ping', (_, res) => {
+      res.send('pong');
+    });
+
     routes.forEach(route => {
       this.app.use('/', route.router);
     });
