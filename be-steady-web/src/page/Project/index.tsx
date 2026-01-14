@@ -3,13 +3,23 @@ import viteLogo from '../../assets/saitama.png'
 import { VerticalCalendar } from '../../components/VerticalCalendar'
 import { IoSettingsOutline } from 'react-icons/io5'
 import SettingModal from './SettingModal'
+import { useProject } from '../../hooks/useProject'
 
-const ProjectPage = () => {
+interface ProjectPageProps {
+    projectId: string;
+}
+
+const ProjectPage = ({ projectId }: ProjectPageProps) => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+    const { data: project, isLoading, error } = useProject(projectId);
   
     const handleToggleSettings = () => {
       setIsSettingsOpen((prev) => !prev)
     }
+
+    if (isLoading) return <div>Loading...</div>
+    if (error) return <div>Error: {error.message}</div>
   
     return (
       <div className="flex flex-col w-1/2 h-full">
@@ -35,7 +45,7 @@ const ProjectPage = () => {
   
         {/* title 뷰 */}
         <div className="flex relative h-24">
-          <h1 className="text-4xl font-bold self-start">준성타마<br/>프로젝트</h1>
+          <h1 className="text-4xl font-bold self-start">{project?.title}</h1>
           <img src={viteLogo} className="absolute bottom-0 right-1/2 w-32 h-32 -z-10" alt="React logo" />        
           <div className="flex flex-row flex-1 justify-end gap-4 self-end">
             <StatisticCard title="전체 운동횟수" value={100} />
