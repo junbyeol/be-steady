@@ -7,6 +7,16 @@ import { ProjectService } from '@services/projects.service';
 export class ProjectController {
   public project = Container.get(ProjectService);
 
+  public getProject = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const projectData = req.params.id;
+      const project: Project = await this.project.getProject(projectData);
+      res.status(200).json({ data: project, message: 'found' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public createProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectData: CreateProjectDto = req.body;

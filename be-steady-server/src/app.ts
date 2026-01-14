@@ -59,8 +59,9 @@ export class App {
         break;
       } catch (error) {
         retries -= 1;
-        logger.error(`🔴 Error connecting to the database. Retrying... (${retries} retries left)`);
         logger.error(error);
+        logger.error(`🔴 Error connecting to the database. Retrying... (${retries} retries left)`);
+
         // 5초 대기 후 재시도
         await new Promise(res => setTimeout(res, 5000));
       }
