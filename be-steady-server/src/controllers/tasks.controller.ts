@@ -12,7 +12,7 @@ export class TaskController {
       const taskData: CreateTaskDto = req.body;
       const createTaskData: Task = await this.task.createTask(taskData);
 
-      res.status(201).json({ data: createTaskData, message: 'created' });
+      res.status(201).json(createTaskData);
     } catch (error) {
       next(error);
     }
@@ -23,7 +23,7 @@ export class TaskController {
       const projectId: string = req.params.projectId;
       const tasks: Task[] = await this.task.findAllTasksByProjectId(projectId);
 
-      res.status(200).json({ data: tasks, message: 'found' });
+      res.status(200).json(tasks);
     } catch (error) {
       next(error);
     }

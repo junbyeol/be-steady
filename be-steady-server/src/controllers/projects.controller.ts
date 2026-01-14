@@ -11,7 +11,7 @@ export class ProjectController {
     try {
       const projectData = req.params.id;
       const project: Project = await this.project.getProject(projectData);
-      res.status(200).json({ data: project, message: 'found' });
+      res.status(200).json(project);
     } catch (error) {
       next(error);
     }
@@ -22,7 +22,7 @@ export class ProjectController {
       const projectData: CreateProjectDto = req.body;
       const createProjectData: Project = await this.project.createProject(projectData);
 
-      res.status(201).json({ data: createProjectData, message: 'created' });
+      res.status(201).json(createProjectData);
     } catch (error) {
       next(error);
     }

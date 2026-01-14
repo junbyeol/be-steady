@@ -18,9 +18,6 @@ const ProjectPage = ({ projectId }: ProjectPageProps) => {
       setIsSettingsOpen((prev) => !prev)
     }
 
-    if (isLoading) return <div>Loading...</div>
-    if (error) return <div>Error: {error.message}</div>
-  
     return (
       <div className="flex flex-col w-1/2 h-full">
         {/* header 뷰 */}
@@ -48,16 +45,20 @@ const ProjectPage = ({ projectId }: ProjectPageProps) => {
           <h1 className="text-4xl font-bold self-start">{project?.title}</h1>
           <img src={viteLogo} className="absolute bottom-0 right-1/2 w-32 h-32 -z-10" alt="React logo" />        
           <div className="flex flex-row flex-1 justify-end gap-4 self-end">
-            <StatisticCard title="전체 운동횟수" value={100} />
-            <StatisticCard title="연속 운동횟수" value={23} />
+            {project && <StatisticCard title="전체 운동횟수" value={100} />}
+            {project && <StatisticCard title="연속 운동횟수" value={23} />}
           </div>
         </div>
         {/* task 뷰 */}
-        <div className="flex-1 flex justify-center items-center">
-          <div className="w-full max-w-lg h-full max-h-[800px]">
-            <VerticalCalendar tasks={[{ year: 2026, month: 0, day: 1, projectId: "1" }]} onPressDay={() => {}} />
+        {isLoading && <div>Loading...</div>}
+        {error && <div>Error: {error.message}</div>}
+        {project && (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="w-full max-w-lg h-full max-h-[800px]">
+              <VerticalCalendar tasks={[{ year: 2026, month: 0, day: 1, projectId: "1" }]} onPressDay={() => {}} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     )
   }

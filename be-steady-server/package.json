@@ -15,7 +15,9 @@
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev",
     "migration:generate": "sequelize migration:generate --name",
-    "migration:run": "sequelize db:migrate"
+    "migration:run": "sequelize db:migrate",
+    "build:docker": "docker build --platform linux/amd64 -f Dockerfile.prod -t asia-northeast3-docker.pkg.dev/be-steady-ef28a/be-steady-server/app:latest .",
+    "push:docker": "docker push asia-northeast3-docker.pkg.dev/be-steady-ef28a/be-steady-server/app:latest"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
