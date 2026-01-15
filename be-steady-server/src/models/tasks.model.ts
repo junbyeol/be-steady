@@ -37,6 +37,12 @@ export default function (sequelize: Sequelize): typeof TaskModel {
     },
     {
       tableName: 'tasks',
+      indexes: [
+        {
+          name: 'projectId_datetime_index',
+          fields: ['project_id', 'datetime'],
+        },
+      ],
       sequelize,
     },
   );

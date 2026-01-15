@@ -50,25 +50,23 @@ export class App {
   }
 
   private async connectToDatabase() {
-    let retries = 5;
-    while (retries > 0) {
-      try {
-        await DB.sequelize.authenticate();
-        await DB.sequelize.sync({ force: false, alter: true });
-        logger.info('🟢 The database is connected.');
-        break;
-      } catch (error) {
-        retries -= 1;
-        logger.error(error);
-        logger.error(`🔴 Error connecting to the database. Retrying... (${retries} retries left)`);
+    // const isDev = this.env === 'development';
+    const isDev = true; // TODO production 배포때는 삭제
 
-        // 5초 대기 후 재시도
-        await new Promise(res => setTimeout(res, 5000));
+    try {
+      await DB.sequelize.authenticate(); // DB 연결 상태만 확인 (매우 안전)
+      if (isDev) {
+        // 개발 환경에서만 모델 정의 기반 자동 동기화
+        await DB.sequelize.sync({ force: true });
+        logger.info('🟡 Database synced (force: true) for development.');
+      } else {
+        // 운영 환경에서는 아무것도 건드리지 않음
+        // (테이블 생성/변경은 오직 db:migrate 명령으로만 수행)
+        logger.info('🟢 Database connected. (Skipping sync for production)');
       }
-    }
-
-    if (retries === 0) {
-      logger.error('🔴 Could not connect to the database after multiple attempts.');
+    } catch (error) {
+      logger.error(error);
+      logger.error(`🔴 Error connecting to the database. Retrying...`);
       throw new Error('Database connection failed');
     }
   }

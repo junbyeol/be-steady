@@ -1,4 +1,4 @@
-import { IsDateString, IsString, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateTaskDto {
   @IsDateString()
@@ -10,8 +10,18 @@ export class CreateTaskDto {
   public projectId: string;
 }
 
-export class FindAllTasksByProjectIdDto {
+export class ProjectIdDto {
   @IsString()
   @IsNotEmpty()
   public projectId: string;
+}
+
+export class FindAllTasksQueryDto {
+  @IsDateString()
+  @IsOptional()
+  public fromDate?: string;
+
+  @IsDateString()
+  @IsOptional()
+  public toDate?: string;
 }

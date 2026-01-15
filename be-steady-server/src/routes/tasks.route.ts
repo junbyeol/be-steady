@@ -15,6 +15,5 @@ export class TaskRoute implements Routes {
 
   private initializeRoutes() {
     this.router.post(`${this.path}`, ValidationMiddleware(CreateTaskDto), this.task.createTask);
-    this.router.get(`${this.path}/project/:projectId`, this.task.findAllTasksByProjectId);
   }
 }

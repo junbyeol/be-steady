@@ -126,8 +126,8 @@ paths:
         500:
           description: 'Server Error'
 
-# [GET] tasks/project/projectId
-  /tasks/project/{projectId}:
+# [GET] projects/:projectId/task
+  /projects/{projectId}/task:
     get:
       tags:
       - tasks
@@ -151,6 +151,30 @@ paths:
             type: array
             items:
               $ref: '#/definitions/tasks'
+
+# [GET] projects/:projectId/task/overview
+  /projects/{projectId}/task/overview:
+    get:
+      tags:
+      - tasks
+      summary: Get Task Overview By Project Id
+      parameters:
+      - name: projectId
+        in: path
+        description: Project Id
+        required: true
+        type: string
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/taskOverview'
 
 # [POST] tasks
   /tasks:
@@ -208,6 +232,33 @@ definitions:
       projectId:
         type: string
         description: project Id (string)
+
+  taskOverview:
+    type: object
+    required:
+        - nTotalTasks
+        - firstDate
+        - lastDate
+        - recentTaskDaysStreak
+        - maxTaskDaysStreak
+    properties:
+      nTotalTasks:
+        type: integer
+        description: total number of tasks
+      firstDate:
+        type: string
+        format: date-time
+        description: first task datetime
+      lastDate:
+        type: string
+        format: date-time
+        description: last task datetime
+      recentTaskDaysStreak:
+        type: integer
+        description: recent task days streak
+      maxTaskDaysStreak:
+        type: integer
+        description: max task days streak
 
 schemes:
  - https
