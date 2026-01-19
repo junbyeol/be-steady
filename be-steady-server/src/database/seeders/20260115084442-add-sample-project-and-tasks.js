@@ -13,6 +13,12 @@ module.exports = {
         created_at: new Date(), // createdAt -> created_at
         updated_at: new Date(), // updatedAt -> updated_at
       },
+      {
+        id: '01AAbc',
+        title: '나만의 프로젝트2',
+        created_at: new Date(), // createdAt -> created_at
+        updated_at: new Date(), // updatedAt -> updated_at
+      },
     ]);
 
     const selectedDays = [

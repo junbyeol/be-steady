@@ -16,7 +16,7 @@
     "deploy:dev": "pm2 start ecosystem.config.js --only dev",
     "migration:generate": "sequelize migration:generate --name",
     "migration:run": "sequelize db:migrate",
-    "db:seed": "docker exec -it server npm run db:seed",
+    "db:seed": "docker exec -it server npx sequelize db:seed:all",
     "build:docker": "docker build --platform linux/amd64 -f Dockerfile.prod -t asia-northeast3-docker.pkg.dev/be-steady-ef28a/be-steady-server/app:latest .",
     "push:docker": "docker push asia-northeast3-docker.pkg.dev/be-steady-ef28a/be-steady-server/app:latest"
   },

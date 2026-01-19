@@ -152,6 +152,30 @@ paths:
             items:
               $ref: '#/definitions/tasks'
 
+# [GET] projects/:projectId
+  /projects/{projectId}:
+    get:
+      tags:
+      - projects
+      summary: Find Project By Id
+      parameters:
+      - name: projectId
+        in: path
+        description: Project Id
+        required: true
+        type: string
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/projects'
+
 # [GET] projects/all
   /projects/all:
     get:
