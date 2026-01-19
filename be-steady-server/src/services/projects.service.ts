@@ -9,6 +9,11 @@ import ShortUniqueId from 'short-unique-id';
 export class ProjectService {
   private uid = new ShortUniqueId({ length: 6 });
 
+  public async getAllProjects(): Promise<Project[]> {
+    const projects = await DB.Projects.findAll();
+    return projects;
+  }
+
   public async getProject(id: string): Promise<Project> {
     const project = await DB.Projects.findOne({ where: { id } });
     if (!project) throw new HttpException(404, 'Project not found');

@@ -17,6 +17,7 @@ export class ProjectRoute implements Routes {
 
   private initializeRoutes() {
     this.router.post(`${this.path}`, ValidationMiddleware(CreateProjectDto), this.project.createProject);
+    this.router.get(`${this.path}/all`, this.project.getAllProjects);
     this.router.get(`${this.path}/:id(\\d+)`, this.project.getProject);
     this.router.get(`${this.path}/:projectId(\\d+)/task`, this.task.findAllTasks);
     this.router.get(`${this.path}/:projectId(\\d+)/task/overview`, this.task.getTaskOverviewByProjectId);

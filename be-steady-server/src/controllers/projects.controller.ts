@@ -17,6 +17,15 @@ export class ProjectController {
     }
   };
 
+  public getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const projects: Project[] = await this.project.getAllProjects();
+      res.status(200).json(projects);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public createProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectData: CreateProjectDto = req.body;

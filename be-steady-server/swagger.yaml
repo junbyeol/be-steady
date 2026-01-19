@@ -152,6 +152,24 @@ paths:
             items:
               $ref: '#/definitions/tasks'
 
+# [GET] projects/all
+  /projects/all:
+    get:
+      tags:
+      - projects
+      summary: Find All Projects
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/projects'
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
 # [GET] projects/:projectId/task/overview
   /projects/{projectId}/task/overview:
     get:
